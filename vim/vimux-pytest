@@ -1,0 +1,26 @@
+#!/usr/bin/env python3
+import os
+import sys
+
+project_files = set(['pyproject.toml', 'setup.py'])
+
+
+def is_project_dir(dirpath):
+    return set(os.listdir(dirpath)).intersection(project_files)
+
+
+print("YOU FOUND ME?", os.getcwd(), sys.argv)
+base = os.getcwd()
+path = sys.argv[1]
+while True:
+    if is_project_dir(base):
+        break
+    base, tail = os.path.split(base)
+    print("WTF?", base)
+    path = os.path.join(tail, path)
+
+# print(base, os.listdir(base), path)
+os.chdir(base)
+# print(os.listdir(os.getcwd()))
+# os.execvp('poetry', ['poetry', 'run',])
+os.execvp('poetry', ['poetry', 'run', 'py.test', '-s', path])
