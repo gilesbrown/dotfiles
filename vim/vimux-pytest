@@ -2,25 +2,35 @@
 import os
 import sys
 
-project_files = set(['pyproject.toml', 'setup.py'])
+project_files = set(['pyproject.toml', 'Pipfile', 'setup.py'])
 
 
-def is_project_dir(dirpath):
+def get_project_files(dirpath):
     return set(os.listdir(dirpath)).intersection(project_files)
 
 
-print("YOU FOUND ME?", os.getcwd(), sys.argv)
-base = os.getcwd()
+# print("YOU FOUND ME?", os.getcwd(), sys.argv)
+
+
+#
+# Look for the project directory
+proj_dir = os.getcwd()
 path = sys.argv[1]
 while True:
-    if is_project_dir(base):
+    proj_files = get_project_files(proj_dir)
+    if proj_files:
         break
-    base, tail = os.path.split(base)
-    print("WTF?", base)
+    proj_dir, tail = os.path.split(proj_dir)
     path = os.path.join(tail, path)
 
-# print(base, os.listdir(base), path)
-os.chdir(base)
-# print(os.listdir(os.getcwd()))
-# os.execvp('poetry', ['poetry', 'run',])
-os.execvp('poetry', ['poetry', 'run', 'py.test', '-s', path])
+
+os.chdir(proj_dir)
+
+#
+# Now run the tests
+if 'pyproject.toml' in proj_files:
+    os.execvp('poetry', ['poetry', 'run', 'py.test', '-s', path])
+elif 'Pipfile' in proj_files:
+    os.execvp('pipenv', ['pipenv', 'run', 'py.test', '-s', path])
+else:
+    os.execvp('py.test', ['py.test', '-s', path])
