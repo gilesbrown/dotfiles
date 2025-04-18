@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# Set-up using the Python dotfiles package
+
+# Configure dotfiles in the default location:
+# https://github.com/jbernard/dotfiles?tab=readme-ov-file#configuration
+script_directory=$(dirname "$(readlink -f "$BASH_SOURCE")")
+ln -fs ${script_directory}/dotfilesrc ~/.dotfilesrc
+
+# Check we have uv installed and then use it to run dotfiles --sync
+if command -v uvx --help &> /dev/null
+then
+    uvx dotfiles --sync
+else
+    echo "uv is required: https://docs.astral.sh/uv/getting-started/" >&2
+    exit 1
+fi
