@@ -1,2 +1,3 @@
 [dotfiles]
 repository = ~/GitHub/gilesbrown/dotfiles
+packages = ['config']
